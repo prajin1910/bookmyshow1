@@ -67,13 +67,17 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const login = async (username: string, password: string): Promise<void> => {
     try {
+      console.log('Attempting login with:', username);
       const response = await api.login({ username, password });
       
       if (!response.ok) {
+        const errorText = await response.text();
+        console.error('Login failed:', errorText);
         throw new Error('Invalid credentials');
       }
       
       const data = await response.json();
+      console.log('Login response:', data);
       
       const user: User = {
         id: data.id,
@@ -88,20 +92,24 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       
       dispatch({ type: 'LOGIN_SUCCESS', payload: { user, token: data.token } });
     } catch (error) {
+      console.error('Login error:', error);
       throw new Error('Login failed');
     }
   };
 
   const register = async (username: string, email: string, password: string): Promise<void> => {
     try {
+      console.log('Attempting registration with:', { username, email });
       const response = await api.register({ username, email, password });
       
       if (!response.ok) {
         const errorData = await response.json();
+        console.error('Registration failed:', errorData);
         throw new Error(errorData.message || 'Registration failed');
       }
       
       const data = await response.json();
+      console.log('Registration response:', data);
       
       const user: User = {
         id: data.id,
@@ -116,6 +124,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       
       dispatch({ type: 'LOGIN_SUCCESS', payload: { user, token: data.token } });
     } catch (error) {
+      console.error('Registration error:', error);
       throw error;
     }
   };

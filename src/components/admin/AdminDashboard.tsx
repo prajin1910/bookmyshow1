@@ -9,6 +9,7 @@ import { Card, CardContent, CardHeader } from '../ui/Card';
 import { Button } from '../ui/Button';
 import { Badge } from '../ui/Badge';
 import { Modal } from '../ui/Modal';
+import { mockBookings } from '../../data/mockData';
 
 export const AdminDashboard: React.FC = () => {
   const { token } = useAuth();
@@ -227,7 +228,7 @@ export const AdminDashboard: React.FC = () => {
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
-                {mockBookings.slice(0, 5).map(booking => {
+                {bookings.slice(0, 5).map(booking => {
                   const flight = flights.find(f => f.id === booking.flightId);
                   return (
                     <div key={booking.id} className="flex items-center justify-between p-4 border border-gray-200 dark:border-gray-600 rounded-lg">

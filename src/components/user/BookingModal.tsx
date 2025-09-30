@@ -55,7 +55,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({
   const handleConfirm = async () => {
     setLoading(true);
     try {
-      await new Promise(resolve => setTimeout(resolve, 2000)); // Simulate API call
+      console.log('Confirming booking with data:', { passengerDetails, contactInfo });
       onConfirm(passengerDetails, contactInfo);
     } finally {
       setLoading(false);

@@ -23,9 +23,11 @@ export const LoginForm: React.FC<LoginFormProps> = ({ onSwitchToRegister }) => {
     setError('');
 
     try {
+      console.log('Attempting login with:', formData.username);
       await login(formData.username, formData.password);
     } catch (err) {
-      setError('Invalid credentials. Try "trilogy"/"admin@flights" for admin or "user"/"password" for user.');
+      console.error('Login error:', err);
+      setError('Invalid credentials. Try "trilogy"/"admin@flights" for admin or "user@scenicairways.com"/"password" for user.');
     } finally {
       setLoading(false);
     }
@@ -90,7 +92,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({ onSwitchToRegister }) => {
           <p className="text-sm font-medium text-blue-900 dark:text-blue-300 mb-2">Demo Accounts:</p>
           <div className="text-xs text-blue-700 dark:text-blue-400 space-y-1">
             <p>• Admin: trilogy / admin@flights</p>
-            <p>• User: user / password</p>
+            <p>• User: user@scenicairways.com / password</p>
           </div>
         </div>
 

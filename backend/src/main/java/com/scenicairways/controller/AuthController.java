@@ -59,7 +59,7 @@ public class AuthController {
                 user.getEmail(), user.getRole().toString()));
         } catch (Exception e) {
             System.err.println("Login failed for email " + loginRequest.getEmail() + ": " + e.getMessage());
-            return ResponseEntity.badRequest().body("Invalid credentials");
+            return ResponseEntity.status(401).body("Invalid credentials");
         }
     }
 

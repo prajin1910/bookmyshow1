@@ -44,6 +44,17 @@ public class UserService implements UserDetailsService {
             userRepository.save(admin);
             System.out.println("Default admin user created: " + adminUsername);
         }
+        
+        // Create a default user for testing
+        if (!userRepository.existsByUsername("user")) {
+            User user = new User();
+            user.setUsername("user");
+            user.setEmail("user@scenicairways.com");
+            user.setPassword(passwordEncoder.encode("password"));
+            user.setRole(User.Role.USER);
+            userRepository.save(user);
+            System.out.println("Default user created: user");
+        }
     }
 
     @Override

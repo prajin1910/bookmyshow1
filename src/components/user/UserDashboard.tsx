@@ -50,13 +50,29 @@ export const UserDashboard: React.FC = () => {
   const handleSearch = async (filters: any) => {
     try {
       setLoading(true);
-      const response = await api.searchFlights(filters);
+      const response = await api.searchFlights({
+        departure: filters.departure,
+        arrival: filters.arrival,
+        date: filters.date
+      });
       if (response.ok) {
         const flights = await response.json();
         setSearchResults(flights);
+      } else {
+        console.error('Search failed:', response.statusText);
+        // Fallback to mock data for demo
+        const { mockFlights } = await import('../../data/mockData');
+        const filtered = mockFlights.filter(f => 
+          f.departure.toLowerCase().includes(filters.departure.toLowerCase()) &&
+          f.arrival.toLowerCase().includes(filters.arrival.toLowerCase())
+        );
+        setSearchResults(filtered);
       }
     } catch (error) {
       console.error('Error searching flights:', error);
+      // Fallback to mock data for demo
+      const { mockFlights } = await import('../../data/mockData');
+      setSearchResults(mockFlights);
     } finally {
       setLoading(false);
     }
@@ -94,6 +110,13 @@ export const UserDashboard: React.FC = () => {
     if (!selectedFlight || !token) return;
 
     try {
+      console.log('Creating booking with data:', {
+        flightId: selectedFlight.id,
+        seats: selectedSeats,
+        passengerDetails,
+        contactInfo
+      });
+      
       const bookingData = {
         flightId: selectedFlight.id,
         seats: selectedSeats.map(seatId => {
@@ -109,10 +132,12 @@ export const UserDashboard: React.FC = () => {
         contactPhone: contactInfo.phone,
       };
 
+      console.log('Final booking data:', bookingData);
       const response = await api.createBooking(bookingData, token);
       
       if (response.ok) {
         const booking = await response.json();
+        console.log('Booking created successfully:', booking);
         
         // Reset state
         setSelectedFlight(null);
@@ -125,6 +150,8 @@ export const UserDashboard: React.FC = () => {
         // Show success message
         alert('Booking confirmed! Check your email for confirmation details.');
       } else {
+        const errorText = await response.text();
+        console.error('Booking failed:', errorText);
         throw new Error('Booking failed');
       }
     } catch (error) {
@@ -292,7 +319,12 @@ export const UserDashboard: React.FC = () => {
           {userBookings.length > 0 ? (
             <div className="grid gap-6">
               {userBookings.map((booking) => {
-                const flight = searchResults.find(f => f.id === booking.flightId);
+                // Try to find flight in search results first, then in mock data
+                let flight = searchResults.find(f => f.id === booking.flightId);
+                if (!flight) {
+                  const { mockFlights } = require('../../data/mockData');
+                  flight = mockFlights.find((f: any) => f.id === booking.flightId);
+                }
                 if (!flight) return null;
 
                 return (
